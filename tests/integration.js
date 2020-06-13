@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter } from 'react-router';
 import { Link, Route, Router, Switch } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { render, fireEvent, cleanup } from 'react-testing-library';
@@ -7,25 +6,51 @@ import * as Yup from 'yup';
 
 import Location from '../src/Location';
 
+const NotFound = () => <div>No match</div>;
+const NotAuthorized = () => <div>Not authorized</div>;
+
 const isNullableDate = Yup.string().test('is-date', '${path}:${value} is not a valid date', date => !date || !isNaN(Date.parse(date)));
-const string = Yup.string();
 const integer = Yup.number().integer();
 const naturalNbr = integer.moreThan(-1);
 const wholeNbr = integer.positive();
 
-const HomeLocation = new Location('/');
-const AboutLocation = new Location('/about');
-const AboutStrictLocation = new Location('/about/');
-const ResourceListLocation = new Location('/resources', null, {
-    typeID: wholeNbr.required(),
-    page: naturalNbr.default(0),
-    rowsPerPage: Yup.number().oneOf([25, 50, 75, 100]).default(25),
-    order: Yup.string().oneOf(['asc', 'desc']).default('asc'),
-    isActive: Yup.boolean(),
-    categoryID: wholeNbr.nullable(),
+const HomeLocation = new Location({
+    path: '/',
+    invalid: NotFound
 });
-const ResourceLocation = new Location('/resources/:id', { id: wholeNbr.required() }, { date: isNullableDate });
-const ProtectedResourceLocation = new Location('/protectedResources/:id', { id: wholeNbr.required() }, { date: isNullableDate });
+const AboutLocation = new Location({
+    path: '/about',
+    invalid: NotFound
+});
+const AboutStrictLocation = new Location({
+    path: '/about/',
+    invalid: NotFound
+ });
+const ResourceListLocation = new Location({
+    path: '/resources',
+    pathParamDefs: null,
+    queryStringParamDefs: {
+        typeID: wholeNbr.required(),
+        page: naturalNbr.default(0),
+        rowsPerPage: Yup.number().oneOf([25, 50, 75, 100]).default(25),
+        order: Yup.string().oneOf(['asc', 'desc']).default('asc'),
+        isActive: Yup.boolean(),
+        categoryID: wholeNbr.nullable()
+    },
+    invalid: NotFound
+});
+const ResourceLocation = new Location({
+    path: '/resources/:id',
+    pathParamDefs: { id: wholeNbr.required() },
+    queryStringParamDefs: { date: isNullableDate },
+    invalid: NotFound
+});
+const ProtectedResourceLocation = new Location({
+    path: '/protectedResources/:id',
+    pathParamDefs: { id: wholeNbr.required() },
+    queryStringParamDefs: { date: isNullableDate },
+    invalid: NotFound
+});
 
 //placeholder for parsed, type-cast props received by matching location's component
 //strictly used for test verification
@@ -58,9 +83,6 @@ const Resource = ({ id, date }) => {
     return <div>Resource</div>;
 };
 
-const NotFound = () => <div>No match</div>;
-const NotAuthorized = () => <div>Not authorized</div>;
-
 function ifAuthorized(test, protectedComponent, notAuthorizedComponent) {
     return test
         ? protectedComponent
@@ -73,11 +95,11 @@ function LocationTest() {
             <Link to={HomeLocation.toUrl()}>Home</Link>
             <Link to={AboutLocation.toUrl()}>About</Link>
             <Switch>
-                {HomeLocation.toRoute({ component: Home, invalid: NotFound }, true)}
-                {AboutLocation.toRoute({ render: () => <About />, invalid: NotFound }, true)}
-                {ResourceListLocation.toRoute({ component: ResourceList, invalid: NotFound }, true)}
-                {ResourceLocation.toRoute({ component: Resource, invalid: NotFound }, true)}
-                {ProtectedResourceLocation.toRoute({ component: ifAuthorized(isAuthorized, Resource, NotAuthorized), invalid: NotFound }, true)}
+                {HomeLocation.toRoute({ component: Home }, true)}
+                {AboutLocation.toRoute({ render: () => <About />}, true)}
+                {ResourceListLocation.toRoute({ component: ResourceList }, true)}
+                {ResourceLocation.toRoute({ component: Resource }, true)}
+                {ProtectedResourceLocation.toRoute({ component: ifAuthorized(isAuthorized, Resource, NotAuthorized) }, true)}
                 <Route component={NotFound} />
             </Switch>
         </div>
@@ -190,7 +212,7 @@ test('renders <NotFound /> on parsing URL with invalid qs params', () => {
 test('strict, insensitive match', () => {
     const StrictRoute = () => (
         <Switch>
-            {AboutStrictLocation.toRoute({ component: About, invalid: NotFound }, false, true)}
+            {AboutStrictLocation.toRoute({ component: About }, false, true)}
             <Route component={NotFound} />
         </Switch>
     );
@@ -201,7 +223,7 @@ test('strict, insensitive match', () => {
 test('strict no match', () => {
     const StrictRoute = () => (
         <Switch>
-            {AboutStrictLocation.toRoute({ component: About, invalid: NotFound }, false, true)}
+            {AboutStrictLocation.toRoute({ component: About }, false, true)}
             <Route component={NotFound} />
         </Switch>
     );
@@ -212,7 +234,7 @@ test('strict no match', () => {
 test('sensitive match', () => {
     const SensitiveRoute = () => (
         <Switch>
-            {AboutLocation.toRoute({ component: About, invalid: NotFound }, false, false, true)}
+            {AboutLocation.toRoute({ component: About }, false, false, true)}
             <Route component={NotFound} />
         </Switch>
     );
@@ -223,7 +245,7 @@ test('sensitive match', () => {
 test('sensitive no match', () => {
     const SensitiveRoute = () => (
         <Switch>
-            {AboutLocation.toRoute({ component: About, invalid: NotFound }, false, false, true)}
+            {AboutLocation.toRoute({ component: About }, false, false, true)}
             <Route component={NotFound} />
         </Switch>
     );
@@ -234,10 +256,7 @@ test('sensitive no match', () => {
 test('children match', () => {
     const ChildrenRoute = () => (
         <Switch>
-            {ResourceLocation.toRoute({
-                children: (props) => <Resource {...props} />,
-                invalid: NotFound
-            }, true)}
+            {ResourceLocation.toRoute({ children: (props) => <Resource {...props} /> }, true)}
             <Route component={NotFound} />
         </Switch>
     );
@@ -248,10 +267,7 @@ test('children match', () => {
 
 test('children no match, renders anyway without param parsing', () => {
     const ChildrenRoute = () => (
-        ResourceLocation.toRoute({
-            children: (props) => <Resource {...props} />,
-            invalid: NotFound
-        }, true)
+        ResourceLocation.toRoute({ children: (props) => <Resource {...props} /> }, true)
     );
     const { container, debug } = renderWithRouter(<ChildrenRoute />, '/does-not-match');
     expect(container.innerHTML).toMatch('Resource');

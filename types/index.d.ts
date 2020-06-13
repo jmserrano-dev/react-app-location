@@ -13,7 +13,12 @@ declare module "@jmserrano/react-app-location" {
       extends RouteComponentProps<TParams, StaticContext, TState> {}
   
     export default class Location<TParams = {}, TState = {}> {
-      constructor(path: string, pathParamDefs?: YupParams, queryStringParamDefs?: YupParams);
+      constructor(params: {
+        path: string,
+        pathParamDefs?: YupParams,
+        queryStringParamDefs?: YupParams,
+        invalid: React.ComponentType
+      });
       path: string;
       toUrl(params?: TParams): string;
       toUrlWithState(params?: TParams, state?: TState): { path: string; state: TState };
@@ -31,13 +36,12 @@ declare module "@jmserrano/react-app-location" {
           children?:
             | ((props: RouteChildrenProps<any>) => React.ReactNode)
             | React.ReactNode;
-          invalid?: any;
         },
         exact?: boolean,
         strict?: boolean,
         sensitive?: boolean
       ): JSX.Element;
-      toDefaultRoute(params: RouteProps, invalid?: any): JSX.Element;
+      toDefaultRoute(params: RouteProps): JSX.Element;
       parseLocationParams(location?: object, match?: object): TParams;
       isValidParams(params?: TParams): boolean;
       toUrlEndingIn(params?: TParams): string;

@@ -9,15 +9,23 @@ const integer = Yup.number().integer();
 const naturalNbr = integer.moreThan(-1);
 const wholeNbr = integer.positive();
 
-const ResourceListLocation = new Location('/resources', null, {
-    typeID: wholeNbr.required(),
-    page: naturalNbr.default(0),
-    rowsPerPage: Yup.number().oneOf([25, 50, 75, 100]).default(25),
-    order: Yup.string().oneOf(['asc', 'desc']).default('asc'),
-    isActive: Yup.boolean(),
-    categoryID: wholeNbr.nullable(),
+const ResourceListLocation = new Location({
+    path: '/resources',
+    pathParamDefs: null,
+    queryStringParamDefs: {
+        typeID: wholeNbr.required(),
+        page: naturalNbr.default(0),
+        rowsPerPage: Yup.number().oneOf([25, 50, 75, 100]).default(25),
+        order: Yup.string().oneOf(['asc', 'desc']).default('asc'),
+        isActive: Yup.boolean(),
+        categoryID: wholeNbr.nullable()
+    }
 });
-const ResourceLocation = new Location('/resources/:id', { id: wholeNbr.required() }, { date: isNullableDate });
+const ResourceLocation = new Location({
+    path: '/resources/:id',
+    pathParamDefs: { id: wholeNbr.required() },
+    queryStringParamDefs: { date: isNullableDate }
+});
 
 afterEach(cleanup);
 

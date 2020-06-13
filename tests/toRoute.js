@@ -1,13 +1,15 @@
 import React from 'react';
-import { render, fireEvent, cleanup } from 'react-testing-library';
-import * as Yup from 'yup';
+import {  cleanup } from 'react-testing-library';
 
 import Location from '../src/Location';
 
-const HomeLocation = new Location('/');
-
 const Home = () => <div>Home</div>;
 const NotFound = () => <div>No match</div>;
+
+const HomeLocation = new Location({
+    path: '/',
+    invalid: NotFound
+});
 
 afterEach(cleanup);
 

@@ -11,8 +11,11 @@ function isEmptyChildren(children) {
 };
 
 export default class Location extends LocationCore {
-    constructor(path, pathParamDefs = {}, queryStringParamDefs = {}) {
-        super(path, pathParamDefs, queryStringParamDefs);
+    _invalid = null;
+
+    constructor(params) {
+        super(params.path, params.pathParamDefs, params.queryStringParamDefs);
+        this._invalid = params.invalid;
     }
 
     toLink(children, params, props = {}) {
@@ -25,9 +28,9 @@ export default class Location extends LocationCore {
     }
 
     toRoute(renderOptions, exact = false, strict = false, sensitive = false) {
-        const { component, render, children, invalid } = renderOptions;
+        const { component, render, children } = renderOptions;
         warning(component || render || children, 'Location.toRoute requires renderOptions argument, which must include either component, render or children property');
-        warning(invalid, 'Location.toRoute requires renderOptions argument, which must include an invalid property, indicating the component to render when the a matched location contains an invalid parameter');
+        warning(this._invalid, 'Location.toRoute requires renderOptions argument, which must include an invalid property, indicating the component to render when the a matched location contains an invalid parameter');
 
         const routeProps = {
             path: this.path,
@@ -54,7 +57,7 @@ export default class Location extends LocationCore {
                 const propsWithParams = getPropsWithParams(props)
                 if (propsWithParams === null) {
                     //schema validation error ocurred, render Invalid component
-                    return React.createElement(invalid);
+                    return React.createElement(this._invalid);
                 }
                 return React.createElement(component, propsWithParams);
             }} />
@@ -63,7 +66,7 @@ export default class Location extends LocationCore {
                 const propsWithParams = getPropsWithParams(props)
                 if (propsWithParams === null) {
                     //schema validation error ocurred, render Invalid component
-                    return React.createElement(invalid);
+                    return React.createElement(this._invalid);
                 }
                 return render(propsWithParams);
             }} />
@@ -74,7 +77,7 @@ export default class Location extends LocationCore {
                     const propsWithParams = getPropsWithParams(props)
                     if (propsWithParams === null) {
                         //schema validation error ocurred, render Invalid component
-                        return React.createElement(invalid);
+                        return React.createElement(this._invalid);
                     }
                     return children(propsWithParams);
                 } else {
@@ -128,13 +131,12 @@ export default class Location extends LocationCore {
                    .replace("//", "/");
     };
 
-    toDefaultRoute(params, invalid) {
+    toDefaultRoute(params) {
         return this.toRoute(
           {
             component: params.component,
             render: params.render,
-            children: params.children,
-            invalid
+            children: params.children
           },
           params.exact,
           params.strict,

@@ -4,14 +4,25 @@ import Location from '../../../src/Location';
 const integer = Yup.number().integer();
 const wholeNbr = integer.positive();
 
-export const HomeLocation = new Location('/');
-
-export const ItemListLocation = new Location('/items', null, {
-    isActive: Yup.boolean(),
-    categoryID: wholeNbr.nullable(),
+export const HomeLocation = new Location({
+     path: '/'
 });
 
-export const ItemLocation = new Location('/items/:id', { id: wholeNbr.required() });
+export const ItemListLocation = new Location({
+    path: '/items',
+    pathParamDefs: null,
+    queryStringParamDefs: {
+        isActive: Yup.boolean(),
+        categoryID: wholeNbr.nullable()
+    }
+});
+
+export const ItemLocation = new Location({
+    path: '/items/:id',
+    pathParamDefs: {
+        id: wholeNbr.required()
+    }
+});
 
 export default {
     Home: HomeLocation,
