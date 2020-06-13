@@ -36,8 +36,15 @@ import { Link, BrowserRouter, Switch, Route } from 'react-router-dom';
 import * as Yup from 'yup';
 import Location from "@jmserrano/react-app-location";
 
-const HomeLocation = new Location('/');
-const ArticleLocation = new Location('/articles/:id', { id: Yup.number().integer().positive().required() });
+const HomeLocation = new Location({
+    path: '/',
+    invalid: NotFound
+});
+const ArticleLocation = new Location({
+    path: '/articles/:id',
+    queryStringParamDefs: { id: Yup.number().integer().positive().required() },
+    invalid: NotFound
+});
 
 const App = () => (
     <BrowserRouter>
@@ -45,7 +52,7 @@ const App = () => (
             {/* Regular Route */}
             <Route path={HomeLocation.path} component={Home} exact />
             {/* Route with params automatically passed as props to your component */}
-            {ArticleLocation.toRoute({ component: Article, invalid: NotFound }, true)}
+            {ArticleLocation.toRoute({ component: Article, exact: true })}
             <Route component={NotFound} />
         </Switch>
     </BrowserRouter>
