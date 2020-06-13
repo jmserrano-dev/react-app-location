@@ -88,45 +88,24 @@ const NotFound = () => (
 ```
 
 ## API
-**`Location.ctor(path: string, pathParamDefs: ?schema, queryStringParamDefs: ?schema): Location`**
-
-Defines a `Location`. pathParamDefs and queryStringParamDefs are optional and specified as Yup schemas.
-
-**`Location.toUrl(params: ?object): string`**
-
-Builds a URL with param values plugged in.
-
-**`Location.toLink(children: func || node, params: ?object, props: ?object): element`**
-
-Generates a React Router 4 `Link` passing the generated URL as the `to` prop.
-
-<pre><strong>Location.toRoute(
-	renderOptions: {
-		component: ?func, 
-		render: ?func, 
-		children: ?func || ?node, 
-		invalid: func
-	}, 
-	exact: bool = false, 
-	strict: bool = false, 
-	sensitive: bool = false
-): element</strong></pre>
-
-Generates a React Router 4 `Route` which parses params and passes them as props to your component. 
-
-**`Location.path: string`**
-
-Returns the path property which you can use when building a Route by hand, e.g., without params passed as props.
-
-**`Location.parseLocationParams(location: object = window.location, ?match: object) : object`**
-
-Returns a literal object containing the parameters parsed from the React Router 4 `location` (or window.location) and `match` (optional) props. Each parameter is validated and cast to the data type indicated in the schema. If validation fails, returns null.
-
-You can manually call `parseLocationParams` from within your component to get the location parameters if you prefer to not use the automatic param parsing and prop injection provided by `Location.toRoute`.
-
-**`Location.isValidParams(params: ?object): boolean`**
-
-Returns a boolean indicating if the parameters are valid.
+```typescript
+export default class Location<TParams = {}, TState = {}> {
+    path: string;
+    constructor(params: {
+        path: string,
+        pathParamDefs?: YupParams,
+        queryStringParamDefs?: YupParams,
+        invalid: React.ComponentType
+    });
+    toUrl(params?: TParams): string;
+    toUrlWithState(params?: TParams, state?: TState): { path: string; state: TState };
+    toLink(children?: string | Function | Node | JSX.Element | React.ReactNode, params?: TParams, props?: object): Element;
+    toRoute(params: RouteProps): JSX.Element;
+    parseLocationParams(location?: object, match?: object): TParams;
+    isValidParams(params?: TParams): boolean;
+    toUrlEndingIn(params?: TParams): string;
+}
+```
 
 ## Try it out
 ### Online
