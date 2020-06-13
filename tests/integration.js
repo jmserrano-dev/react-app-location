@@ -94,11 +94,11 @@ function LocationTest() {
             <Link to={HomeLocation.toUrl()}>Home</Link>
             <Link to={AboutLocation.toUrl()}>About</Link>
             <Switch>
-                {HomeLocation.toRoute({ component: Home }, true)}
-                {AboutLocation.toRoute({ render: () => <About />}, true)}
-                {ResourceListLocation.toRoute({ component: ResourceList }, true)}
-                {ResourceLocation.toRoute({ component: Resource }, true)}
-                {ProtectedResourceLocation.toRoute({ component: ifAuthorized(isAuthorized, Resource, NotAuthorized) }, true)}
+                {HomeLocation.toRoute({ component: Home, exact: true })}
+                {AboutLocation.toRoute({ render: () => <About />, exact: true })}
+                {ResourceListLocation.toRoute({ component: ResourceList, exact: true })}
+                {ResourceLocation.toRoute({ component: Resource, exact: true })}
+                {ProtectedResourceLocation.toRoute({ component: ifAuthorized(isAuthorized, Resource, NotAuthorized), exact: true })}
                 <Route component={NotFound} />
             </Switch>
         </div>
@@ -211,7 +211,7 @@ test('renders <NotFound /> on parsing URL with invalid qs params', () => {
 test('strict, insensitive match', () => {
     const StrictRoute = () => (
         <Switch>
-            {AboutStrictLocation.toRoute({ component: About }, false, true)}
+            {AboutStrictLocation.toRoute({ component: About, exact: false,  strict: true })}
             <Route component={NotFound} />
         </Switch>
     );
@@ -222,7 +222,7 @@ test('strict, insensitive match', () => {
 test('strict no match', () => {
     const StrictRoute = () => (
         <Switch>
-            {AboutStrictLocation.toRoute({ component: About }, false, true)}
+            {AboutStrictLocation.toRoute({ component: About, exact: false,  strict: true })}
             <Route component={NotFound} />
         </Switch>
     );
@@ -233,7 +233,7 @@ test('strict no match', () => {
 test('sensitive match', () => {
     const SensitiveRoute = () => (
         <Switch>
-            {AboutLocation.toRoute({ component: About }, false, false, true)}
+            {AboutLocation.toRoute({ component: About, exact: false,  strict: false, sensitive: true })}
             <Route component={NotFound} />
         </Switch>
     );
@@ -244,7 +244,7 @@ test('sensitive match', () => {
 test('sensitive no match', () => {
     const SensitiveRoute = () => (
         <Switch>
-            {AboutLocation.toRoute({ component: About }, false, false, true)}
+            {AboutLocation.toRoute({ component: About, exact: false,  strict: false, sensitive: true })}
             <Route component={NotFound} />
         </Switch>
     );
@@ -255,7 +255,7 @@ test('sensitive no match', () => {
 test('children match', () => {
     const ChildrenRoute = () => (
         <Switch>
-            {ResourceLocation.toRoute({ children: (props) => <Resource {...props} /> }, true)}
+            {ResourceLocation.toRoute({ children: (props) => <Resource {...props} />, exact: true })}
             <Route component={NotFound} />
         </Switch>
     );
@@ -266,7 +266,7 @@ test('children match', () => {
 
 test('children no match, renders anyway without param parsing', () => {
     const ChildrenRoute = () => (
-        ResourceLocation.toRoute({ children: (props) => <Resource {...props} /> }, true)
+        ResourceLocation.toRoute({ children: (props) => <Resource {...props} />, exact: true })
     );
     const { container, debug } = renderWithRouter(<ChildrenRoute />, '/does-not-match');
     expect(container.innerHTML).toMatch('Resource');

@@ -27,8 +27,9 @@ export default class Location extends LocationCore {
         return <Link {...linkProps}>{children}</Link>;
     }
 
-    toRoute(renderOptions, exact = false, strict = false, sensitive = false) {
-        const { component, render, children } = renderOptions;
+    toRoute(params) {          
+        const { component, render, children, exact, strict, sensitive } = params;
+
         warning(component || render || children, 'Location.toRoute requires renderOptions argument, which must include either component, render or children property');
         warning(this._invalid, 'Location.toRoute requires renderOptions argument, which must include an invalid property, indicating the component to render when the a matched location contains an invalid parameter');
 
@@ -99,7 +100,6 @@ export default class Location extends LocationCore {
         warning(location.pathname, 'location.pathname is required.');
 
         if (!match) {
-            warning(false, 'location.pathname does not match Location.path.');
             return null;
         }
 
@@ -129,19 +129,6 @@ export default class Location extends LocationCore {
         return this.toUrl(newParams)
                    .replaceAll("%2F", "/")
                    .replace("//", "/");
-    };
-
-    toDefaultRoute(params) {
-        return this.toRoute(
-          {
-            component: params.component,
-            render: params.render,
-            children: params.children
-          },
-          params.exact,
-          params.strict,
-          params.sensitive
-        );
     };
 
     toUrlWithState(params, state) {
