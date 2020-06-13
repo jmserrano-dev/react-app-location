@@ -10,7 +10,6 @@ export const HomeLocation = new Location({
 
 export const ItemListLocation = new Location({
     path: '/items',
-    pathParamDefs: null,
     queryStringParamDefs: {
         isActive: Yup.boolean(),
         categoryID: wholeNbr.nullable()

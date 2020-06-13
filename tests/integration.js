@@ -28,7 +28,6 @@ const AboutStrictLocation = new Location({
  });
 const ResourceListLocation = new Location({
     path: '/resources',
-    pathParamDefs: null,
     queryStringParamDefs: {
         typeID: wholeNbr.required(),
         page: naturalNbr.default(0),

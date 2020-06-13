@@ -29,7 +29,6 @@ test('constructs with path params', () => {
 test('constructs with query string params', () => {
     const ResourceListLocation = new Location({
         path: '/resources',
-        pathParamDefs: null,
         queryStringParamDefs: {
             typeID: wholeNbr.required(),
             page: naturalNbr.default(0),
