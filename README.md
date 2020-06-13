@@ -13,8 +13,9 @@ This is a fork from [Original Repo](https://github.com/bradstiff/react-app-locat
 * Added [babel-plugin-dev-expression](https://www.npmjs.com/package/babel-plugin-dev-expression) to bypass warning messages in production mode
 * Added types for Typescript
 * Added other methods to API
+    * constructor (Refactorized) :warning:
+    * toRoute (Refactorized) :warning:
     * toUrlEndingIn
-    * toDefaultRoute
     * toUrlWithState
 
 ## Usage

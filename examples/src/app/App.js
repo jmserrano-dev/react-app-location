@@ -41,9 +41,9 @@ export default () => (
                 </ul>
             </nav>
             <Switch>
-                {Locations.Home.toRoute({ component: Home, invalid: NotFound }, true)}
-                {Locations.ItemList.toRoute({ component: ItemList, invalid: NotFound }, true)}
-                {Locations.Item.toRoute({ component: Item, invalid: NotFound }, true)}
+                {Locations.Home.toRoute({ component: Home, invalid: NotFound, exact: true })}
+                {Locations.ItemList.toRoute({ component: ItemList, invalid: NotFound, exact: true })}
+                {Locations.Item.toRoute({ component: Item, invalid: NotFound, exact: true })}
                 <Route component={NotFound} />
             </Switch>
         </div>

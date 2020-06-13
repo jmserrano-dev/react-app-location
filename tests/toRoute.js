@@ -1,19 +1,21 @@
 import React from 'react';
-import { render, fireEvent, cleanup } from 'react-testing-library';
-import * as Yup from 'yup';
+import {  cleanup } from 'react-testing-library';
 
 import Location from '../src/Location';
 
-const HomeLocation = new Location('/');
-
 const Home = () => <div>Home</div>;
 const NotFound = () => <div>No match</div>;
+
+const HomeLocation = new Location({
+    path: '/',
+    invalid: NotFound
+});
 
 afterEach(cleanup);
 
 test('errors when neither component, render nor children properties are provided', () => {
     jest.spyOn(global.console, "error").mockImplementation(() => { })
-    HomeLocation.toRoute({ invalid: NotFound });
+    HomeLocation.toRoute({});
     expect(console.error).toBeCalled();
 })
 
@@ -25,6 +27,6 @@ test('errors when invalid property is not provided', () => {
 
 test('warning when children node is provided', () => {
     jest.spyOn(global.console, "error").mockImplementation(() => { })
-    HomeLocation.toRoute({ children: <Home />, invalid: NotFound });
+    HomeLocation.toRoute({ children: <Home /> });
     expect(console.error).toBeCalled();
 })
