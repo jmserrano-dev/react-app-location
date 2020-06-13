@@ -120,4 +120,29 @@ export default class Location extends LocationCore {
             return null;
         }
     }
+
+    toUrlEndingIn(params) {
+        const newParams = { ...params, anyPath: window.location.pathname };
+        return this.toUrl(newParams)
+                   .replaceAll("%2F", "/")
+                   .replace("//", "/");
+    };
+
+    toDefaultRoute(params, invalid) {
+        return this.toRoute(
+          {
+            component: params.component,
+            render: params.render,
+            children: params.children,
+            invalid
+          },
+          params.exact,
+          params.strict,
+          params.sensitive
+        );
+    };
+
+    toUrlWithState(params, state) {
+        return { path: this.toUrl(params), state };
+    };
 }

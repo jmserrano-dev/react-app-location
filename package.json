@@ -1,9 +1,10 @@
 {
-  "name": "react-app-location",
-  "version": "1.2.0",
+  "name": "@jmserrano/react-app-location",
+  "version": "1.2.4",
   "description": "A package to avoid repetition with Routes, Links and URLs, and reduce boilerplate with location param parsing in React Apps",
   "main": "./dist/Location.js",
-  "repository": "https://github.com/bradstiff/react-app-location.git",
+  "types": "./types/index.d.ts",
+  "repository": "https://github.com/jmserrano-dev/react-app-location.git",
   "scripts": {
     "start": "webpack-dev-server --mode development",
     "test": "jest",
@@ -53,6 +54,8 @@
     "yup": "^0.26.3"
   },
   "dependencies": {
+    "@types/yup": "^0.26.27",
+    "@types/react-router": "^5.1.7",
     "app-location": "^1.1.1",
     "querystringify": "^2.0.0",
     "warning": "^4.0.2"

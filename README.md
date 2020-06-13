@@ -1,14 +1,21 @@
-# react-app-location
+# @jmserrano/react-app-location
+
 Declarative locations for <a href="https://facebook.github.io/react">React</a> apps. Avoids repetition with Routes and Links, and reduces boilerplate with parsing and casting parameters from URLs.
-<p align="center">
-  <a href="https://www.npmjs.com/package/react-app-location"><img src="https://img.shields.io/npm/v/react-app-location.svg?style=flat-square"></a>
-  <a href="https://www.npmjs.com/package/react-app-location"><img src="https://img.shields.io/npm/dm/react-app-location.svg?style=flat-square"></a>
-</p>
 
 This package depends on React Router 4. If you are not using React Router 4, take a look at [app-location](https://github.com/bradstiff/app-location), which is router-agnostic.
 
+
 ## Install
-`npm install react-app-location --save`
+`npm i @jmserrano/react-app-location --save`
+
+## Improvements
+This is a fork from [Original Repo](https://github.com/bradstiff/react-app-location). I have developed the following new features:
+* Added [babel-plugin-dev-expression](https://www.npmjs.com/package/babel-plugin-dev-expression) to bypass warning messages in production mode
+* Added types for Typescript
+* Added other methods to API
+    * toUrlEndingIn
+    * toDefaultRoute
+    * toUrlWithState
 
 ## Usage
 A `Location` is an endpoint that your app supports.  It specifies a path, and can optionally specify path and query string parameters. 
@@ -26,7 +33,7 @@ This eliminates a boatload of boilerplate.
 import React from "react";
 import { Link, BrowserRouter, Switch, Route } from 'react-router-dom';
 import * as Yup from 'yup';
-import Location from "react-app-location";
+import Location from "@jmserrano/react-app-location";
 
 const HomeLocation = new Location('/');
 const ArticleLocation = new Location('/articles/:id', { id: Yup.number().integer().positive().required() });
